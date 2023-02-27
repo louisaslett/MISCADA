@@ -1,4 +1,5 @@
 FROM ghcr.io/rocker-org/devcontainer/tidyverse:4
+
 RUN install2.r --error --skipinstalled --ncpus -2 \
     GGally \
     data.table \
@@ -31,3 +32,12 @@ RUN install2.r --error --skipinstalled --ncpus -2 \
     webshot \
     && rm -rf /tmp/downloaded_packages \
     && strip /usr/local/lib/R/site-library/*/libs/*.so
+
+RUN apt_install \
+    libgeos-dev \
+    libudunits2-dev \
+    libproj-dev \
+    libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN R -q -e 'keras::install_keras()'
