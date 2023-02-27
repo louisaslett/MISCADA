@@ -1,6 +1,8 @@
 {
     "name": "${localWorkspaceFolderBasename}",
-	"image": "ghcr.io/rocker-org/devcontainer/tidyverse:4",
+	"build": {
+        "dockerfile": "Dockerfile"
+    },
 	"portsAttributes": {
 		"8787": {
 			"label": "RStudio"
