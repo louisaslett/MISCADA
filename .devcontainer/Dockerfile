@@ -1,6 +1,7 @@
 FROM ghcr.io/rocker-org/devcontainer/tidyverse:4
 
 RUN install2.r --error --skipinstalled --ncpus -2 \
+    DataExplorer \
     GGally \
     data.table \
     doMC \
@@ -9,13 +10,16 @@ RUN install2.r --error --skipinstalled --ncpus -2 \
     foreach \
     ggforce \
     ggplot2 \
+    glmnet \
     glue \
     keras \
     latex2exp \
+    markdown \
     mgcv \
     mlr3 \
     mlr3learners \
     mlr3verse \
+    modeldata \
     mvtnorm \
     nnet \
     pixmap \
@@ -30,6 +34,8 @@ RUN install2.r --error --skipinstalled --ncpus -2 \
     skimr \
     tidyverse \
     webshot \
+    xgboost \
+    yardstick \
     && rm -rf /tmp/downloaded_packages \
     && strip /usr/local/lib/R/site-library/*/libs/*.so
 
@@ -39,6 +45,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y update \
     libudunits2-dev \
     libproj-dev \
     libgdal-dev \
+    libxt6 \
+    libglpk-dev \
     && DEBIAN_FRONTEND=noninteractive apt-get -qq -y clean \
     && rm -rf /var/lib/apt/lists/*
 
