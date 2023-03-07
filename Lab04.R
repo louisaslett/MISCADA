@@ -1,6 +1,9 @@
 ### ASML Classification Lab 4 -- Deep Learning Intro ###
 ########################################################
 
+# NOTE: This Lab requires at least 8GB RAM, so if you are using
+#       Github Codespaces, make sure to launch on the 4-core server!
+
 ## Introduction
 #
 # Some of the software in this lab doesn't work well in notebooks and
