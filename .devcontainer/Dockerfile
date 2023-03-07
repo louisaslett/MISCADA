@@ -54,3 +54,6 @@ RUN pip install --upgrade pip \
     && pip install tensorflow \
     && pip install tensorflow-hub tensorflow-datasets scipy requests Pillow h5py pandas pydot \
     && echo "RETICULATE_PYTHON=/usr/bin/python3" >> /usr/local/lib/R/etc/Renviron.site
+
+RUN echo "auth-none=1" >> /etc/rstudio/rserver.conf \
+    && echo "USER=rstudio" >> /etc/environment
