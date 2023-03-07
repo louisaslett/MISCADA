@@ -63,7 +63,7 @@ credit_test <- testing(credit_split2)
 library("recipes")
 
 cake <- recipe(Status ~ ., data = credit_data) %>%
-  step_meanimpute(all_numeric()) %>% # impute missings on numeric values with the mean
+  step_impute_mean(all_numeric()) %>% # impute missings on numeric values with the mean
   step_center(all_numeric()) %>% # center by subtracting the mean from all numeric features
   step_scale(all_numeric()) %>% # scale by dividing by the standard deviation on all numeric features
   step_unknown(all_nominal(), -all_outcomes()) %>% # create a new factor level called "unknown" to account for NAs in factors, except for the outcome (response can't be NA)
@@ -151,10 +151,10 @@ deep.net %>% fit(
 )
 
 # To get the probability predictions on the test set:
-pred_test_prob <- deep.net %>% predict_proba(credit_test_x)
+pred_test_prob <- deep.net %>% predict(credit_test_x)
 
 # To get the raw classes (assuming 0.5 cutoff):
-pred_test_res <- deep.net %>% predict_classes(credit_test_x)
+pred_test_res <- deep.net %>% predict(credit_test_x) %>% `>`(0.5) %>% as.integer()
 
 # Confusion matrix/accuracy/AUC metrics
 # (recall, in Lab03 we got accuracy ~0.80 and AUC ~0.84 from the super learner,
@@ -229,10 +229,10 @@ deep.net %>% fit(
 )
 
 # To get the probability predictions on the test set:
-pred_test_prob <- deep.net %>% predict_proba(credit_test_x)
+pred_test_prob <- deep.net %>% predict(credit_test_x)
 
 # To get the raw classes (assuming 0.5 cutoff):
-pred_test_res <- deep.net %>% predict_classes(credit_test_x)
+pred_test_res <- deep.net %>% predict(credit_test_x) %>% `>`(0.5) %>% as.integer()
 
 # Confusion matrix/accuracy/AUC metrics
 # (recall, in Lab03 we got accuracy ~0.80 and AUC ~0.84 from the super learner,
@@ -335,7 +335,7 @@ deep.net %>% fit(
   validation_data = list(mnist_val_x, mnist_val_y)
 )
 
-pred <- deep.net %>% predict_classes(mnist_test_x)
+pred <- deep.net %>% predict(mnist_test_x) %>% k_argmax()
 # Confusion matrix/accuracy
 table(pred, max.col(mnist_test_y)-1)
 yardstick::accuracy_vec(as.factor(max.col(mnist_test_y)-1),
