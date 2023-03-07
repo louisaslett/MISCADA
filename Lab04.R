@@ -335,7 +335,7 @@ deep.net %>% fit(
   validation_data = list(mnist_val_x, mnist_val_y)
 )
 
-pred <- deep.net %>% predict(mnist_test_x) %>% k_argmax()
+pred <- deep.net %>% predict(mnist_test_x) %>% k_argmax() %>% as.vector()
 # Confusion matrix/accuracy
 table(pred, max.col(mnist_test_y)-1)
 yardstick::accuracy_vec(as.factor(max.col(mnist_test_y)-1),
