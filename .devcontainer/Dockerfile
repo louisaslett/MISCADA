@@ -31,6 +31,7 @@ RUN install2.r --error --skipinstalled --ncpus -2 \
     rpart \
     rsample \
     skimr \
+    sp \
     tidyverse \
     webshot \
     xgboost \
