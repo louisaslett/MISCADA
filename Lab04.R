@@ -91,7 +91,7 @@ credit_test_final <- bake(cake, new_data = credit_test) # apply preprocessing to
 # Therefore we'll directly interface to Keras, a deep learning interface
 # developed by François Chollet from Google which builds Tensorflow models.
 
-library("keras")
+library("keras3")
 
 # The lab server is already setup with Keras, but if you are running
 # this on your own machine then you may need to install it with the

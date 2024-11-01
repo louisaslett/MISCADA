@@ -12,7 +12,7 @@ RUN install2.r --error --skipinstalled --ncpus -2 \
     ggplot2 \
     glmnet \
     glue \
-    keras \
+    keras3 \
     latex2exp \
     markdown \
     mgcv \
