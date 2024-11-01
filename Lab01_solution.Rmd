@@ -265,7 +265,6 @@ First, we load mapping data from associated libraries
 ```{r}
 library("rnaturalearth")
 library("rnaturalearthdata")
-library("rgeos")
 
 world <- ne_countries(scale = "medium", returnclass = "sf")
 ```
