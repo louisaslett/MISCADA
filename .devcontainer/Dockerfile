@@ -49,9 +49,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y update \
     && DEBIAN_FRONTEND=noninteractive apt-get -qq -y clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip \
-    && pip install tensorflow \
-    && pip install tensorflow-hub tensorflow-datasets scipy requests Pillow h5py pandas pydot \
+RUN pip install --break-system-packages tensorflow \
+    && pip install --break-system-packages tensorflow-hub tensorflow-datasets scipy requests Pillow h5py pandas pydot \
     && echo "RETICULATE_PYTHON=/usr/bin/python3" >> /usr/local/lib/R/etc/Renviron.site
 
 RUN echo "auth-none=1" >> /etc/rstudio/rserver.conf \
