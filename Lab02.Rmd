@@ -47,9 +47,9 @@ lines involved by looking at the documentation for each step.
 library("tidyverse")
 
 plotimages <- function(i) {
-  imgs <- mnist %>% 
-    slice(i) %>% 
-    mutate(image.num = i) %>%
+  imgs <- mnist |> 
+    slice(i) |> 
+    mutate(image.num = i) |>
     pivot_longer(x0.y27:x27.y0,
                  names_to = c("x", "y"),
                  names_pattern = "x([0-9]{1,2}).y([0-9]{1,2})",
@@ -321,8 +321,8 @@ You can try the bigger dataset on your own computer in your own time.  We also
 need to set the response to be a factor because R loaded it as numbers.
 
 ```{r}
-mnist <- mnist %>%
-  slice(sample(length(response), 1000)) %>% 
+mnist <- mnist |>
+  slice(sample(length(response), 1000)) |> 
   mutate(response = as.factor(response))
 
 task_mnist <- TaskClassif$new(id = "credit",
@@ -372,7 +372,7 @@ then fit again.
 
 ```{r}
 task_mnist <- TaskClassif$new(id = "credit",
-                              backend = mnist %>%
+                              backend = mnist |>
                                 select_if(function(x) {
                                   is.factor(x) || I(sd(x)>0)
                                 }),

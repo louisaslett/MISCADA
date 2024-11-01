@@ -65,12 +65,12 @@ credit_test <- testing(credit_split2)
 # data are effectively parameters of the ultimate model.
 library("recipes")
 
-cake <- recipe(Status ~ ., data = credit_data) %>%
-  step_impute_mean(all_numeric()) %>% # impute missings on numeric values with the mean
-  step_center(all_numeric()) %>% # center by subtracting the mean from all numeric features
-  step_scale(all_numeric()) %>% # scale by dividing by the standard deviation on all numeric features
-  step_unknown(all_nominal(), -all_outcomes()) %>% # create a new factor level called "unknown" to account for NAs in factors, except for the outcome (response can't be NA)
-  step_dummy(all_nominal(), one_hot = TRUE) %>% # turn all factors into a one-hot coding
+cake <- recipe(Status ~ ., data = credit_data) |>
+  step_impute_mean(all_numeric()) |> # impute missings on numeric values with the mean
+  step_center(all_numeric()) |> # center by subtracting the mean from all numeric features
+  step_scale(all_numeric()) |> # scale by dividing by the standard deviation on all numeric features
+  step_unknown(all_nominal(), -all_outcomes()) |> # create a new factor level called "unknown" to account for NAs in factors, except for the outcome (response can't be NA)
+  step_dummy(all_nominal(), one_hot = TRUE) |> # turn all factors into a one-hot coding
   prep(training = credit_train) # learn all the parameters of preprocessing on the training data
 
 credit_train_final <- bake(cake, new_data = credit_train) # apply preprocessing to training data
@@ -103,25 +103,25 @@ library("keras")
 # expects to receive the data in matrix form and wants the features and
 # responses separately
 
-credit_train_x <- credit_train_final %>%
-  select(-starts_with("Status_")) %>%
+credit_train_x <- credit_train_final |>
+  select(-starts_with("Status_")) |>
   as.matrix()
-credit_train_y <- credit_train_final %>%
-  select(Status_bad) %>%
-  as.matrix()
-
-credit_validate_x <- credit_validate_final %>%
-  select(-starts_with("Status_")) %>%
-  as.matrix()
-credit_validate_y <- credit_validate_final %>%
-  select(Status_bad) %>%
+credit_train_y <- credit_train_final |>
+  select(Status_bad) |>
   as.matrix()
 
-credit_test_x <- credit_test_final %>%
-  select(-starts_with("Status_")) %>%
+credit_validate_x <- credit_validate_final |>
+  select(-starts_with("Status_")) |>
   as.matrix()
-credit_test_y <- credit_test_final %>%
-  select(Status_bad) %>%
+credit_validate_y <- credit_validate_final |>
+  select(Status_bad) |>
+  as.matrix()
+
+credit_test_x <- credit_test_final |>
+  select(-starts_with("Status_")) |>
+  as.matrix()
+credit_test_y <- credit_test_final |>
+  select(Status_bad) |>
   as.matrix()
 
 
@@ -129,16 +129,16 @@ credit_test_y <- credit_test_final %>%
 # We can now start to construct our deep neural network architecture
 # We make a neural network with two hidden layers, 32 neurons in the
 # first, 32 in second and an output to a binary classification
-deep.net <- keras_model_sequential() %>%
+deep.net <- keras_model_sequential() |>
   layer_dense(units = 32, activation = "relu",
-              input_shape = c(ncol(credit_train_x))) %>%
-  layer_dense(units = 32, activation = "relu") %>%
+              input_shape = c(ncol(credit_train_x))) |>
+  layer_dense(units = 32, activation = "relu") |>
   layer_dense(units = 1, activation = "sigmoid")
 # Have a look at it
 deep.net
 
 # This must then be "compiled".  See lectures on the optimiser.
-deep.net %>% compile(
+deep.net |> compile(
   loss = "binary_crossentropy",
   optimizer = optimizer_rmsprop(),
   metrics = c("accuracy")
@@ -147,17 +147,17 @@ deep.net %>% compile(
 # Finally, fit the neural network!  We provide the training data, and
 # also a list of validation data.  We can use this to monitor for
 # overfitting. See lectures regarding mini batches
-deep.net %>% fit(
+deep.net |> fit(
   credit_train_x, credit_train_y,
   epochs = 50, batch_size = 32,
   validation_data = list(credit_validate_x, credit_validate_y),
 )
 
 # To get the probability predictions on the test set:
-pred_test_prob <- deep.net %>% predict(credit_test_x)
+pred_test_prob <- deep.net |> predict(credit_test_x)
 
 # To get the raw classes (assuming 0.5 cutoff):
-pred_test_res <- deep.net %>% predict(credit_test_x) %>% `>`(0.5) %>% as.integer()
+pred_test_res <- deep.net |> predict(credit_test_x) |> `>`(0.5) |> as.integer()
 
 # Confusion matrix/accuracy/AUC metrics
 # (recall, in Lab03 we got accuracy ~0.80 and AUC ~0.84 from the super learner,
@@ -171,25 +171,25 @@ yardstick::roc_auc_vec(factor(credit_test_y, levels = c("1","0")),
 
 
 # Ok, we didn't really go that deep?  Try deeper??
-deep.net <- keras_model_sequential() %>%
+deep.net <- keras_model_sequential() |>
   layer_dense(units = 128, activation = "relu",
-              input_shape = c(ncol(credit_train_x))) %>%
-  layer_dense(units = 128, activation = "relu") %>%
-  layer_dense(units = 128, activation = "relu") %>%
-  layer_dense(units = 128, activation = "relu") %>%
-  layer_dense(units = 128, activation = "relu") %>%
-  layer_dense(units = 128, activation = "relu") %>%
+              input_shape = c(ncol(credit_train_x))) |>
+  layer_dense(units = 128, activation = "relu") |>
+  layer_dense(units = 128, activation = "relu") |>
+  layer_dense(units = 128, activation = "relu") |>
+  layer_dense(units = 128, activation = "relu") |>
+  layer_dense(units = 128, activation = "relu") |>
   layer_dense(units = 1, activation = "sigmoid")
 # Have a look at it
 deep.net
 
-deep.net %>% compile(
+deep.net |> compile(
   loss = "binary_crossentropy",
   optimizer = optimizer_rmsprop(),
   metrics = c("accuracy")
 )
 
-deep.net %>% fit(
+deep.net |> fit(
   credit_train_x, credit_train_y,
   epochs = 50, batch_size = 32,
   validation_data = list(credit_validate_x, credit_validate_y),
@@ -201,41 +201,41 @@ deep.net %>% fit(
 
 # We learned in lectures that we have methods that can combat this and still
 # allow fitting very deep neural networks:
-deep.net <- keras_model_sequential() %>%
+deep.net <- keras_model_sequential() |>
   layer_dense(units = 32, activation = "relu",
-              input_shape = c(ncol(credit_train_x))) %>%
-  layer_batch_normalization() %>%
-  layer_dropout(rate = 0.4) %>%
-  layer_dense(units = 32, activation = "relu") %>%
-  layer_batch_normalization() %>%
-  layer_dropout(rate = 0.4) %>%
-  layer_dense(units = 32, activation = "relu") %>%
-  layer_batch_normalization() %>%
-  layer_dropout(rate = 0.4) %>%
-  layer_dense(units = 32, activation = "relu") %>%
-  layer_batch_normalization() %>%
-  layer_dropout(rate = 0.4) %>%
+              input_shape = c(ncol(credit_train_x))) |>
+  layer_batch_normalization() |>
+  layer_dropout(rate = 0.4) |>
+  layer_dense(units = 32, activation = "relu") |>
+  layer_batch_normalization() |>
+  layer_dropout(rate = 0.4) |>
+  layer_dense(units = 32, activation = "relu") |>
+  layer_batch_normalization() |>
+  layer_dropout(rate = 0.4) |>
+  layer_dense(units = 32, activation = "relu") |>
+  layer_batch_normalization() |>
+  layer_dropout(rate = 0.4) |>
   layer_dense(units = 1, activation = "sigmoid")
 # Have a look at it
 deep.net
 
-deep.net %>% compile(
+deep.net |> compile(
   loss = "binary_crossentropy",
   optimizer = optimizer_rmsprop(),
   metrics = c("accuracy")
 )
 
-deep.net %>% fit(
+deep.net |> fit(
   credit_train_x, credit_train_y,
   epochs = 50, batch_size = 32,
   validation_data = list(credit_validate_x, credit_validate_y),
 )
 
 # To get the probability predictions on the test set:
-pred_test_prob <- deep.net %>% predict(credit_test_x)
+pred_test_prob <- deep.net |> predict(credit_test_x)
 
 # To get the raw classes (assuming 0.5 cutoff):
-pred_test_res <- deep.net %>% predict(credit_test_x) %>% `>`(0.5) %>% as.integer()
+pred_test_res <- deep.net |> predict(credit_test_x) |> `>`(0.5) |> as.integer()
 
 # Confusion matrix/accuracy/AUC metrics
 # (recall, in Lab03 we got accuracy ~0.80 and AUC ~0.84 from the super learner,
@@ -262,9 +262,9 @@ mnist <- fst::read.fst("mnist.fst")
 library("tidyverse")
 
 plotimages <- function(i) {
-  imgs <- mnist %>%
-    slice(i) %>%
-    mutate(image.num = i) %>%
+  imgs <- mnist |>
+    slice(i) |>
+    mutate(image.num = i) |>
     pivot_longer(x0.y27:x27.y0,
                  names_to = c("x", "y"),
                  names_pattern = "x([0-9]{1,2}).y([0-9]{1,2})",
@@ -312,18 +312,18 @@ mnist_test_y <- nnet::class.ind(mnist[50001:60000,1])
 
 
 # Now we create a simple convolutional neural network
-deep.net <- keras_model_sequential() %>%
+deep.net <- keras_model_sequential() |>
   layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = 'relu',
-                input_shape = c(28,28,1)) %>%
-  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = 'relu') %>%
-  layer_max_pooling_2d(pool_size = c(2, 2)) %>%
-  layer_dropout(rate = 0.25) %>%
-  layer_flatten() %>%
-  layer_dense(units = 64, activation = 'relu') %>%
-  layer_dropout(rate = 0.5) %>%
+                input_shape = c(28,28,1)) |>
+  layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = 'relu') |>
+  layer_max_pooling_2d(pool_size = c(2, 2)) |>
+  layer_dropout(rate = 0.25) |>
+  layer_flatten() |>
+  layer_dense(units = 64, activation = 'relu') |>
+  layer_dropout(rate = 0.5) |>
   layer_dense(units = 10, activation = 'softmax')
 
-deep.net %>% compile(
+deep.net |> compile(
   loss = "categorical_crossentropy",
   optimizer = optimizer_rmsprop(),
   metrics = c("accuracy")
@@ -331,14 +331,14 @@ deep.net %>% compile(
 
 # We should train for more epochs but don't want lab machine to go too slow!
 # Try improving on this in your own time
-deep.net %>% fit(
+deep.net |> fit(
   mnist_train_x, mnist_train_y,
   batch_size = 32,
   epochs = 5,
   validation_data = list(mnist_val_x, mnist_val_y)
 )
 
-pred <- deep.net %>% predict(mnist_test_x) %>% k_argmax() %>% as.vector()
+pred <- deep.net |> predict(mnist_test_x) |> k_argmax() |> as.vector()
 # Confusion matrix/accuracy
 table(pred, max.col(mnist_test_y)-1)
 yardstick::accuracy_vec(as.factor(max.col(mnist_test_y)-1),
