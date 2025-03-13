@@ -157,7 +157,7 @@ deep.net |> fit(
 pred_test_prob <- deep.net |> predict(credit_test_x)
 
 # To get the raw classes (assuming 0.5 cutoff):
-pred_test_res <- deep.net |> predict(credit_test_x) |> `>`(0.5) |> as.integer()
+pred_test_res <- deep.net |> predict(credit_test_x) |> (`>`)(0.5) |> as.integer()
 
 # Confusion matrix/accuracy/AUC metrics
 # (recall, in Lab03 we got accuracy ~0.80 and AUC ~0.84 from the super learner,
@@ -235,7 +235,7 @@ deep.net |> fit(
 pred_test_prob <- deep.net |> predict(credit_test_x)
 
 # To get the raw classes (assuming 0.5 cutoff):
-pred_test_res <- deep.net |> predict(credit_test_x) |> `>`(0.5) |> as.integer()
+pred_test_res <- deep.net |> predict(credit_test_x) |> (`>`)(0.5) |> as.integer()
 
 # Confusion matrix/accuracy/AUC metrics
 # (recall, in Lab03 we got accuracy ~0.80 and AUC ~0.84 from the super learner,
@@ -312,9 +312,8 @@ mnist_test_y <- nnet::class.ind(mnist[50001:60000,1])
 
 
 # Now we create a simple convolutional neural network
-deep.net <- keras_model_sequential() |>
-  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = 'relu',
-                input_shape = c(28,28,1)) |>
+deep.net <- keras_model_sequential(input_shape = c(28,28,1)) |>
+  layer_conv_2d(filters = 32, kernel_size = c(3,3), activation = 'relu') |>
   layer_conv_2d(filters = 64, kernel_size = c(3,3), activation = 'relu') |>
   layer_max_pooling_2d(pool_size = c(2, 2)) |>
   layer_dropout(rate = 0.25) |>
@@ -338,7 +337,7 @@ deep.net |> fit(
   validation_data = list(mnist_val_x, mnist_val_y)
 )
 
-pred <- deep.net |> predict(mnist_test_x) |> k_argmax() |> as.vector()
+pred <- deep.net |> predict(mnist_test_x) |> op_argmax(axis = 2) |> as.vector()
 # Confusion matrix/accuracy
 table(pred, max.col(mnist_test_y)-1)
 yardstick::accuracy_vec(as.factor(max.col(mnist_test_y)-1),
